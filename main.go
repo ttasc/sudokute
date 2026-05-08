@@ -26,8 +26,8 @@ func main() {
 
 	isRunning := true
 	for isRunning {
-		// Timeout 100ms (~10 FPS)
-		evt, err := ttbox.PollEventTimeout(100 * time.Millisecond)
+		// Timeout 500ms (~5 FPS)
+		evt, err := ttbox.PollEventTimeout(500 * time.Millisecond)
 
 		if err == nil {
 			if evt.Type == ttbox.EventKey && (evt.Key == ttbox.KeyEscape || evt.Key == ttbox.KeyCtrlC || evt.Ch == 'q' || evt.Ch == 'Q') {
