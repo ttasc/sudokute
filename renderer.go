@@ -34,7 +34,6 @@ const (
 	ColorMatchBg     = 236 // Dark gray background for highlighting matching numbers
 	ColorText        = 250 // Light gray text
 	ColorTextDim     = 240 // Dim gray text for inactive elements
-	ColorBgModal     = 235 // Background color for the popup modal
 )
 
 // RenderGame draws the entire game interface including board, cells, and status line.
@@ -45,10 +44,10 @@ func RenderGame(state *GameState) {
 	drawBoard(state)
 
 	if state.Mode == ModeSolved {
-		drawEndgamePopup(state)
+		drawEndgameBanner()
+	} else {
+		drawControlsGuide()
 	}
-
-	drawControlsGuide()
 
 	ttbox.Present()
 }
@@ -247,47 +246,23 @@ func drawControlsGuide() {
 	ttbox.DrawTextCenter(h-1, guideText, ColorText, ttbox.ColorDefault)
 }
 
-// drawEndgamePopup displays a modal dialogue when the puzzle is completely solved.
-func drawEndgamePopup(state *GameState) {
+// drawEndgameBanner displays the game result prominently at the bottom of the screen without covering the board.
+func drawEndgameBanner() {
 	w, h := ttbox.Size()
-
-	msgFg := ColorWin
-	msg := " SUDOKU SOLVED! "
-	subMsg := "[R] Play Again   [ESC] Exit "
-
-	boxW := len(subMsg) + 6
-	boxH := 4
-
-	x := (w - boxW) / 2
-	_, offsetY := GetBoardOffset()
-
-	// Dynamic Y positioning: Shift the popup to the opposite vertical half of the screen relative
-	// to the cursor. This prevents the modal from obscuring the cell that ended the game.
-	var y int
-	if state.CursorY < GridSize/2 {
-		y = offsetY + BoardTotalHeight
-		if y+boxH > h {
-			y = h - boxH
-		}
-	} else {
-		y = max(offsetY-boxH-1, 0)
+	if w == 0 || h == 0 {
+		return
 	}
 
-	ttbox.SetColor(ColorText, ColorBgModal)
-	ttbox.Fill(x, y, boxW, boxH, ' ')
+	msg := " ★ SUDOKU SOLVED! ★ "
+	subMsg := " [R] Play Again   [ESC] Exit "
 
-	// Box
-	ttbox.SetColor(ColorMinorBorder, ColorBgModal)
-	ttbox.Box(x, y, boxW, boxH)
-
+	// Draw the main victory message.
 	ttbox.SetAttr(true, false, false, false)
-	ttbox.DrawTextCenter(y+1, msg, msgFg, ColorBgModal)
+	ttbox.DrawTextCenter(h-2, msg, ColorWin, ttbox.ColorDefault)
 	ttbox.ResetAttr()
 
-	ttbox.DrawTextCenter(y+2, subMsg, ColorTextDim, ColorBgModal)
-
-	// Reset Color
-	ttbox.SetColor(ttbox.ColorDefault, ttbox.ColorDefault)
+	// Draw the sub-message for key actions.
+	ttbox.DrawTextCenter(h-1, subMsg, ColorTextDim, ttbox.ColorDefault)
 }
 
 // getElapsedTime safely calculates the duration of the current game.
