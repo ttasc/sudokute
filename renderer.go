@@ -253,7 +253,7 @@ func drawEndgameBanner() {
 		return
 	}
 
-	msg := " ★ SUDOKU SOLVED! ★ "
+	msg := " * SUDOKU SOLVED! * "
 	subMsg := " [R] Play Again   [ESC] Exit "
 
 	// Draw the main victory message.
