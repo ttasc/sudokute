@@ -1,4 +1,4 @@
-# Sudokute
+# 🔢 sudokute
 
 A minimalist, terminal-native Sudoku implementation written in Go.
 
